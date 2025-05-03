@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Requests</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #f4f4f4;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        select {
+            padding: 5px;
+            font-size: 14px;
+        }
+        button {
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        #home-button {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 20px;
+        }
+
+        #home-button button {
+            padding: 8px 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        #home-button button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <h1>Your Service Requests</h1>
+
+    <div id="home-button">
+        <button onclick="window.location.href='owner-dashboard.html'">Go to Home</button>
+    </div>
+
+    <ul id="service-list">
+        <!-- Service requests will be populated here -->
+    </ul>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api/ser1';
+
+        
+        async function loadServiceRequests() {
+            const userEmail = localStorage.getItem('eid'); 
+
+            if (!userEmail) {
+                alert('Please log in first.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/${userEmail}`);
+                const requests = await response.json();
+
+                const serviceList = document.getElementById('service-list');
+                serviceList.innerHTML = requests.map(request => `
+                    <li>
+                        <div>
+                            <p><strong>Issue:</strong> ${request.issue}</p>
+                            <p><strong>Location:</strong> ${request.location || 'Not specified'}</p>
+                            <p><strong>Status:</strong> <span id="status-${request._id}">${request.status}</span></p>
+                        </div>
+                        <div class="button-container">
+                            <button onclick="showDropdown('${request._id}', '${request.status}')">Update Status</button>
+                            <div id="dropdown-${request._id}" style="display: none;">
+                                <select onchange="updateStatus('${request._id}', this.value)">
+                                    <option value="Pending" ${request.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                                    <option value="Accepted" ${request.status === 'Accepted' ? 'selected' : ''}>Accepted</option>
+                                    <option value="Declined" ${request.status === 'Declined' ? 'selected' : ''}>Declined</option>
+                                    <option value="Completed" ${request.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                                </select>
+                            </div>
+                        </div>
+                    </li>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading service requests:', error);
+                //alert('Failed to load service requests.');
+                document.body.innerHTML += 'No Service Requests';
+            }
+        }
+
+    
+        function showDropdown(requestId, currentStatus) {
+            const dropdown = document.getElementById(`dropdown-${requestId}`);
+            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Update Service Request Status
+        async function updateStatus(requestId, status) {
+            try {
+                const response = await fetch(`${API_URL}/update/${requestId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ status })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status} - ${response.statusText}`);
+                }
+
+                
+                const statusElement = document.getElementById(`status-${requestId}`);
+                statusElement.textContent = status;
+
+            
+                const dropdown = document.getElementById(`dropdown-${requestId}`);
+                dropdown.style.display = 'none';
+
+                alert('Status updated successfully!');
+            } catch (error) {
+                console.error('Error updating service request status:', error);
+                alert('Failed to update service request status.');
+            }
+        }
+
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            loadServiceRequests();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Request - Vehicle Breakdown Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #f5f6f5; /* Light neutral gray */
+            color: #2d3436; /* Dark gray */
+            line-height: 1.6;
+            padding: 2rem;
+        }
+
+        h1 {
+            text-align: center;
+            color: #c62828; /* Professional red */
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+
+        #home-button {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 2rem;
+            width: fit-content;
+        }
+
+        #home-button button {
+            padding: 0.75rem 1.5rem;
+            background-color: #2e7d32; /* Professional green */
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #home-button button:hover {
+            background-color: #1b5e20; /* Darker green */
+            transform: translateY(-2px);
+        }
+
+        form#serviceRequestForm {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #2d3436;
+            font-size: 1rem;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1.25rem;
+            border: 1px solid #b0bec5; /* Subtle gray */
+            border-radius: 6px;
+            font-size: 1rem;
+            background-color: #f9fafb; /* Very light gray */
+            transition: border-color 0.3s ease;
+        }
+
+        input[readonly] {
+            background-color: #e9ecef; /* Slightly darker for readonly */
+            color: #4a5558; /* Lighter gray text */
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical; /* Allows vertical resize only */
+        }
+
+        input:focus, textarea:focus {
+            border-color: #c62828;
+            outline: none;
+            box-shadow: 0 0 5px rgba(198, 40, 40, 0.3);
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #c62828; /* Professional red */
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #9a1d1d; /* Darker red */
+            transform: translateY(-2px);
+        }
+
+        button[type="submit"].loading {
+            background-color: #b0bec5; /* Gray when loading */
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        button[type="submit"].loading::after {
+            content: "Submitting...";
+            display: inline-block;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            form#serviceRequestForm {
+                padding: 1.5rem;
+            }
+
+            #home-button {
+                padding-left: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            form#serviceRequestForm {
+                padding: 1rem;
+            }
+
+            button[type="submit"] {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="home-button">
+        <button onclick="window.location.href='user-dashboard.html'">Go to Home</button>
+    </div>
+
+    <h1>Service Request Form</h1>
+
+    <form id="serviceRequestForm">
+        <label for="uid">User Email (UID):</label>
+        <input type="email" id="uid" name="uid" readonly>
+
+        <label for="ownerId">Owner Email:</label>
+        <input type="email" id="ownerId" name="ownerId" readonly>
+
+       
+        <label for="vehicle">Select Vehicle Type:</label><br>
+        <input type="radio" id="vehicle" name="vehicle" value="2wheeler">
+        <label for="2wheeler">2 Wheeler</label><br>
+
+        <input type="radio" id="vehicle" name="vehicle" value="4wheeler">
+        <label for="4wheeler">4 Wheeler</label>
+
+        
+
+        <label for="location">Location:</label>
+        <input type="text" id="location" name="location" placeholder="Enter location (e.g., City or Address)" required>
+
+        <label for="issue">Issue:</label>
+        <textarea id="issue" name="issue" placeholder="Describe the issue" required></textarea>
+
+        <button type="submit">Submit Request</button>
+    </form>
+
+    <script>
+        function populateForm(uid, ownerId) {
+            document.getElementById('uid').value = uid;
+            document.getElementById('ownerId').value = ownerId;
+        }
+
+        const uid = localStorage.getItem('uid'); 
+        const ownerId = new URLSearchParams(window.location.search).get('ownerEmail');
+        populateForm(uid, ownerId);
+
+        document.getElementById('serviceRequestForm').addEventListener('submit', async (event) => {
+            event.preventDefault(); 
+
+            const submitButton = event.target.querySelector('button[type="submit"]');
+            submitButton.classList.add('loading');
+            submitButton.disabled = true;
+
+            const formData = {
+                userEmail: document.getElementById('uid').value,
+                ownerEmail: document.getElementById('ownerId').value,
+                location: document.getElementById('location').value,
+                issue: document.getElementById('issue').value,
+                vehicle: document.getElementById('vehicle').value,
+            };
+            const API_URL = 'http://localhost:5000/api/service';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert('Service request submitted successfully!');
+                    window.location.href = './user-dashboard.html';
+                } else {
+                    alert(`Error: ${result.error}`);
+                }
+            } catch (error) {
+                console.error('Error submitting service request:', error);
+                alert('An error occurred while submitting your request.');
+            } finally {
+                submitButton.classList.remove('loading');
+                submitButton.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

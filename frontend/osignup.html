@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Page Signup Form</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f4f7fc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            position: relative;
+        }
+
+        .form-card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            position: relative;
+        }
+
+        .form-card h2 {
+            margin-bottom: 30px;
+            font-weight: bold;
+            color: #333;
+            font-size: 26px;
+        }
+
+        .form-card .form-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .form-card input, .form-card select {
+            border-radius: 10px;
+            padding: 12px;
+            border: 1px solid #d0d0d0;
+            width: 100%;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-card input:focus, .form-card select:focus {
+            border-color: #0056b3;
+            outline: none;
+            box-shadow: 0 0 8px rgba(0, 86, 179, 0.3);
+        }
+
+        .form-card button {
+            margin-top: 15px;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 18px;
+            transition: 0.3s;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .form-page {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .form-page.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .progress-container {
+            width: 100%;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #007bff;
+            transition: width 0.3s ease-in-out;
+        }
+
+        .home-btn {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            padding: 8px 16px;
+            font-size: 16px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    
+    <button type="button" class="btn btn-primary home-btn" onclick="window.location.href='./owner.html'">Go to Home</button>
+
+    <div class="form-card">
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <form id="signupForm">
+          
+            <div class="form-page active" id="page1">
+                <h2>Step 1: Personal Details</h2>
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" class="form-control" id="phone" name="phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                <button type="button" class="btn btn-primary btn-block" onclick="nextPage()">Next</button>
+            </div>
+
+            <div class="form-page" id="page2">
+              <h2>Step 2: Shop Details</h2>
+              <div class="form-group">
+                  <label for="shopName">Shop Name</label>
+                  <input type="text" class="form-control" id="shopName" name="shopName" required>
+              </div>
+              <div class="form-group">
+                  <label for="shopImage">Shop Image (URL)</label>
+                  <input type="url" class="form-control" id="shopImage" name="shopImage" required>
+              </div>
+              <div class="form-group">
+                  <label for="licenseNumber">License Number</label>
+                  <input type="text" class="form-control" id="licenseNumber" name="licenseNumber" required>
+              </div>
+              <div class="form-group">
+                  <label for="shopLocation">Shop Location</label>
+                  <input type="text" class="form-control" id="shopLocation" name="shopLocation" required>
+              </div>
+              <button type="button" class="btn btn-secondary btn-block" onclick="prevPage()">Back</button>
+              <button type="button" class="btn btn-primary btn-block" onclick="nextPage()">Next</button>
+          </div>
+
+            <div class="form-page" id="page3">
+              <h2>Step 3: Additional Details</h2>
+              <div class="form-group">
+                  <label for="operatingHours">Operating Hours</label>
+                  <input type="text" class="form-control" id="operatingHours" name="operatingHours" required>
+              </div>
+              <div class="form-group">
+                  <label for="servicesOffered">Services Offered</label>
+                  <input type="text" class="form-control" id="servicesOffered" name="servicesOffered" required>
+              </div>
+              <div class="form-group">
+                  <label for="chargesRange">Charges Range</label>
+                  <input type="text" class="form-control" id="chargesRange" name="chargesRange" required>
+              </div>
+              <div class="form-group">
+                  <label for="secret-question">Secret Question</label>
+                  <select class="form-control" id="secret-question" name="secretQuestion" required>
+                      <option value="" disabled selected>Select a secret question</option>
+                      <option value="What was the name of your first pet?">What was the name of your first pet?</option>
+                      <option value="What is the name of your primary school?">What is the name of your primary school?</option>
+                      <option value="In which city were you born?">In which city were you born?</option>
+                      <option value="What is the name of your childhood best friend?">What is the name of your childhood best friend?</option>
+                  </select>
+              </div>
+              <div class="form-group">
+                  <label for="secret-answer">Answer to Secret Question</label>
+                  <input type="text" class="form-control" id="secret-answer" name="secretAnswer" required>
+              </div>
+              <button type="button" class="btn btn-secondary btn-block" onclick="prevPage()">Back</button>
+              <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+          </div>
+      </form>
+  </div>
+
+    <script>
+        let currentPage = 1;
+        const totalPages = 3;
+        const progressBar = document.getElementById('progressBar');
+
+        function nextPage() {
+            if (currentPage < totalPages) {
+                document.getElementById(`page${currentPage}`).classList.remove('active');
+                currentPage++;
+                document.getElementById(`page${currentPage}`).classList.add('active');
+                updateProgressBar();
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                document.getElementById(`page${currentPage}`).classList.remove('active');
+                currentPage--;
+                document.getElementById(`page${currentPage}`).classList.add('active');
+                updateProgressBar();
+            }
+        }
+
+        function updateProgressBar() {
+            const progress = (currentPage / totalPages) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        document.getElementById("signupForm").addEventListener("submit", async function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const API_OWNER_URL = "http://localhost:5000/api/auth";
+
+            // Show loading state
+            const submitButton = document.querySelector('#signupForm button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Signing Up...';
+
+            // Collect form data
+            const formData = {
+                name: document.getElementById("name").value.trim(),
+                phone: document.getElementById("phone").value.trim(),
+                email: document.getElementById("email").value.trim(),
+                password: document.getElementById("password").value.trim(),
+                shopName: document.getElementById("shopName").value.trim(),
+                shopImage: document.getElementById("shopImage").value.trim(),
+                licenseNumber: document.getElementById("licenseNumber").value.trim(),
+                shopLocation: document.getElementById("shopLocation").value.trim(),
+                operatingHours: document.getElementById("operatingHours").value.trim(),
+                servicesOffered: document.getElementById("servicesOffered").value.trim(),
+                chargesRange: document.getElementById("chargesRange").value.trim(),
+                secretQuestion: document.getElementById("secret-question").value,
+                secretAnswer: document.getElementById("secret-answer").value.trim()
+            };
+
+            // Basic client-side validation
+            if (!formData.name || !formData.email || !formData.password) {
+                alert("Please fill in all required personal details.");
+                submitButton.disabled = false;
+                submitButton.textContent = 'Sign Up';
+                return;
+            }
+
+            if (!formData.shopName || !formData.shopLocation) {
+                alert("Please fill in all required shop details.");
+                submitButton.disabled = false;
+                submitButton.textContent = 'Sign Up';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_OWNER_URL}/owner/signup`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    alert("Signup Successful!");
+                    window.location.href = `./owner.html`; // Redirect to owner.html
+                } else {
+                    alert(result.message || "Signup failed. Please try again.");
+                }
+            } catch (error) {
+                console.error("Error during signup:", error);
+                alert("Signup Failed: Could not connect to server. Please check your internet connection and try again.");
+            } finally {
+                // Reset button state
+                submitButton.disabled = false;
+                submitButton.textContent = 'Sign Up';
+            }
+        });
+    </script>
+</body>
+</html>

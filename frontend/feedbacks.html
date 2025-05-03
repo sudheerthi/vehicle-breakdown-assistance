@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        #home-button {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 20px;
+            width: fit-content;
+        }
+
+        #home-button button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        #home-button button:hover {
+            background-color: #218838;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input, select, textarea, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="home-button">
+        <button onclick="window.location.href='available-mechanics.html'">Go to Home</button>
+    </div>
+
+    <h1>Feedback Form</h1>
+
+    <form id="feedbackForm">
+        <label for="ownerEmail">Owner Email:</label>
+        <input type="email" id="ownerEmail" name="ownerEmail" readonly>
+
+        <label for="rating">Rating (1 to 5):</label>
+        <select id="rating" name="rating" required>
+            <option value="" disabled selected>Select rating</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+        </select>
+
+        <label for="comments">Comments:</label>
+        <textarea id="comments" name="comments" placeholder="Leave your comments" required></textarea>
+
+        <button type="submit">Submit Feedback</button>
+    </form>
+
+    <script>
+        // Function to populate the owner email field
+        function populateForm(ownerEmail) {
+            document.getElementById('ownerEmail').value = ownerEmail;
+        }
+
+        // Get the owner email from the URL
+        const ownerEmail = new URLSearchParams(window.location.search).get('ownerEmail'); // Retrieve owner email from query parameter
+
+        // Populate the form
+        populateForm(ownerEmail);
+
+        // Handle form submission
+        document.getElementById('feedbackForm').addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent default form submission
+
+            const formData = {
+                ownerEmail: document.getElementById('ownerEmail').value,
+                rating: document.getElementById('rating').value,
+                comments: document.getElementById('comments').value,
+            };
+            const API_URL = 'http://localhost:5000/api/feedback';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert('Feedback submitted successfully!');
+                    window.location.href=`./user-dashboard.html`;
+                } else {
+                    alert(`Error: ${result.error}`);
+                }
+            } catch (error) {
+                console.error('Error submitting feedback:', error);
+                alert('An error occurred while submitting your feedback.');
+            }
+        });
+    </script>
+</body>
+</html>

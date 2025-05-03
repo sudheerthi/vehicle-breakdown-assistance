@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Portal</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Center Content */
+        .container-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+            position: relative;
+        }
+
+        /* Home Button (Left Aligned) */
+        .home-button {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+        }
+
+        /* Card Styling */
+        .card {
+            display: flex;
+            flex-direction: row;
+            width: 80%;
+            max-width: 850px; /* Increased width */
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Image Section */
+        .card img {
+            width: 50%;
+            height: auto;
+            object-fit: cover;
+            border-radius: 10px 0 0 10px;
+        }
+
+        /* Form Section */
+        .card-body {
+            width: 50%;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .card-header {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .card {
+                flex-direction: column;
+            }
+
+            .card img {
+                width: 100%;
+                height: 200px;
+                border-radius: 10px 10px 0 0;
+            }
+
+            .card-body {
+                width: 100%;
+            }
+
+            .home-button {
+                left: 10px;
+                top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1 style="text-align: center;">Owner Portal</h1>
+    </header>
+    
+    <main>
+        <section class="container-center">
+            <!-- Home Button (Left Aligned) -->
+            <button onclick="window.location.href='index.html'" class="btn btn-success home-button">Go to Home</button>
+
+            <div class="card">
+                <img src="login1.jpg" alt="Owner Login">
+                
+                <div class="card-body">
+                    <div class="card-header">Login</div>
+                    
+                    <form id="owner-login-form">
+                        <div class="form-group">
+                            <label for="owner-email">Email address</label>
+                            <input type="email" class="form-control" id="owner-email" placeholder="Enter email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="owner-password">Password</label>
+                            <input type="password" class="form-control" id="owner-password" placeholder="Password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Login</button>
+                    </form>
+
+                    <div class="text-center" style="margin-top: 15px;">
+                        <p>Don't have an account? <a href="osignup.html">Sign up</a></p>
+                        <p>
+                            <a href="#" data-toggle="modal" data-target="#forgotPasswordModal">Forgot Password?</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1" role="dialog" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="forgotPasswordModalLabel">Forgot Password</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="forgot-password-form">
+                        <div class="form-group">
+                            <label for="forgot-password-email">Email address</label>
+                            <input type="email" class="form-control" id="forgot-password-email" placeholder="Enter your registered email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="forgot-password-secret-question">Secret Question</label>
+                            <select class="form-control" id="forgot-password-secret-question" required>
+                                <option value="" disabled selected>Select your secret question</option>
+                                <option value="What was the name of your first pet?">What was the name of your first pet?</option>
+                                <option value="What is the name of your primary school?">What is the name of your primary school?</option>
+                                <option value="In which city were you born?">In which city were you born?</option>
+                                <option value="What is the name of your childhood best friend?">What is the name of your childhood best friend?</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="forgot-password-secret-answer">Answer to Secret Question</label>
+                            <input type="text" class="form-control" id="forgot-password-secret-answer" placeholder="Enter your answer" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts/owner.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

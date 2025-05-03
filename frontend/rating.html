@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Feedback</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #333;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            width: 100%;
+            max-width: 600px;
+        }
+        li {
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #f4f4f4;
+            border-radius: 5px;
+        }
+        .no-feedback {
+            text-align: center;
+            color: #666;
+            margin-top: 20px;
+        }
+        #home-button {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        #home-button button {
+            padding: 8px 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        #home-button button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <h1>Owner Feedback</h1>
+
+    <div id="home-button">
+        <button onclick="window.location.href='owner-dashboard.html'">Go to Home</button>
+    </div>
+    <ul id="feedback-list"></ul>
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+
+        // Load Feedback Details
+        async function loadFeedbacks() {
+            const token = localStorage.getItem('token'); // Get token from localStorage
+            if (!token) {
+                alert('Please log in first.');
+                return;
+            }
+            const email = localStorage.getItem('eid'); // Get email from localStorage
+            console.log(email);
+            try {
+                const response = await fetch(`${API_URL}/feedback/${email}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status} - ${response.statusText}`);
+                }
+
+                const feedbacks = await response.json();
+
+                const feedbackList = document.getElementById('feedback-list');
+                feedbackList.innerHTML = ''; // Clear previous entries
+
+                if (feedbacks.length === 0) {
+                    feedbackList.innerHTML = '<li class="no-feedback">No feedbacks found for this owner.</li>';
+                    return;
+                }
+
+                feedbacks.forEach(({ rating, comments, createdAt }) => {
+                    const feedbackItem = document.createElement('li');
+                    feedbackItem.innerHTML = `
+                        <p><strong>Rating:</strong> ${rating}/5</p>
+                        <p><strong>Comments:</strong> ${comments || 'No comments'}</p>
+                        <p><em>Submitted on: ${new Date(createdAt).toLocaleDateString()}</em></p>
+                    `;
+                    feedbackList.appendChild(feedbackItem);
+                });
+            } catch (error) {
+                console.error('Error loading feedbacks:', error);
+                const feedbackList = document.getElementById('feedback-list');
+                feedbackList.innerHTML = '<li class="no-feedback">No Feedbacks</li>';
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', loadFeedbacks);
+    </script>
+</body>
+</html>

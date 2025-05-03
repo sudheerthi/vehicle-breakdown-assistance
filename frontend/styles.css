@@ -1,0 +1,139 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    background-color: #f8f9fa;
+}
+
+header {
+    background-color: #343a40;
+    color: white;
+    padding: 1rem 0;
+}
+
+main {
+    padding: 2rem;
+}
+
+button {
+    padding: 1rem 2rem;
+    margin: 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+form {
+    margin: 2rem 0;
+}
+
+form input {
+    display: block;
+    margin: 0.5rem auto;
+    padding: 0.5rem;
+    width: 80%;
+}
+
+form button {
+    margin-top: 1rem;
+}
+
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+
+/* Home Button */
+#home-button {
+    margin-bottom: 20px;
+}
+
+#home-button button {
+    padding: 8px 16px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#home-button button:hover {
+    background-color: #218838;
+}
+
+/* Card Container */
+.card-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f8f9fa;
+}
+
+/* Card Styling */
+.card {
+    display: flex;
+    flex-direction: row;
+    width: 80%;
+    max-width: 900px;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Card Image */
+.card img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px 0 0 10px;
+}
+
+/* Card Content */
+.card-content {
+    width: 50%;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Form Styling */
+.form-group {
+    margin-bottom: 15px;
+}
+
+/* Card Header */
+.card-header {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    padding-bottom: 15px;
+}
+
+/* Text Centering */
+.text-center p {
+    margin: 5px 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .card {
+        flex-direction: column;
+        width: 90%;
+    }
+
+    .card img {
+        width: 100%;
+        height: 200px;
+    }
+
+    .card-content {
+        width: 100%;
+    }
+}

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Owner Details</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    /* Modal should be hidden initially */
+    #edit-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      width: 350px;
+      max-height: 80vh; /* Set a max-height for the modal */
+      overflow-y: auto; /* Enable scrolling when content overflows */
+      position: relative;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 20px;
+      cursor: pointer;
+      color: red;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #home-button {
+      display: flex;
+      justify-content: flex-start;
+      margin-bottom: 20px;
+    }
+
+    #home-button button {
+      padding: 8px 16px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    #home-button button:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Owner Details</h1>
+
+  <div id="home-button">
+    <button onclick="window.location.href='owner-dashboard.html'">Go to Home</button>
+  </div>
+
+  <div id="owner-info">
+    <!-- Owner details will be populated here -->
+  </div>
+
+  <button id="edit-button">Edit Details</button>
+
+  <!-- Modal for Edit Form -->
+  <div id="edit-modal">
+    <div class="modal-content">
+      <span class="close-btn" id="close-modal">❌</span>
+      <h2>Edit Owner Details</h2>
+      <form id="edit-owner-form">
+        <label for="owner-name">Name:</label>
+        <input type="text" id="owner-name" required><br><br>
+
+        <label for="contact">Contact:</label>
+        <input type="text" id="contact" required><br><br>
+
+        <label for="location">Location:</label>
+        <input type="text" id="location" required><br><br>
+
+        <label for="shop-name">Shop Name:</label>
+        <input type="text" id="shop-name" required><br><br>
+
+        <label for="shop-image">Shop Image URL:</label>
+        <input type="url" id="shop-image" required><br><br>
+
+        <label for="operating-hours">Operating Hours:</label>
+        <input type="text" id="operating-hours" required><br><br>
+
+        <label for="services-offered">Services Offered:</label>
+        <input type="text" id="services-offered" required><br><br>
+
+        <label for="charges-range">Charges Range:</label>
+        <input type="text" id="charges-range" required><br><br>
+
+        <button type="submit">Save Changes</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:5000/api/owners';
+
+    // Load Owner Details
+    async function loadOwnerDetails() {
+      const token = localStorage.getItem('token');
+      const email = localStorage.getItem('eid');
+
+      if (!token || !email) {
+        alert('Please log in first.');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/${email}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch owner details.');
+        }
+
+        const data = await response.json();
+        document.getElementById('owner-info').innerHTML = `
+          <img src="${data.owner.shopImage}" alt="Shop Image" style="max-width: 300px; height: auto; border: 1px solid #ccc; border-radius: 8px; margin-top: 10px;" />
+          <p><strong>Name:</strong> ${data.owner.name}</p>
+          <p><strong>Contact:</strong> ${data.owner.phone}</p>
+          <p><strong>Location:</strong> ${data.owner.shopLocation}</p>
+          <p><strong>Shop Name:</strong> ${data.owner.shopName}</p>
+          <p><strong>Operating Hours:</strong> ${data.owner.operatingHours}</p>
+          <p><strong>Services Offered:</strong> ${data.owner.servicesOffered}</p>
+          <p><strong>Charges Range:</strong> ${data.owner.chargesRange}</p>
+        `;
+
+        // Pre-fill modal inputs
+        document.getElementById('owner-name').value = data.owner.name;
+        document.getElementById('contact').value = data.owner.phone;
+        document.getElementById('location').value = data.owner.shopLocation;
+        document.getElementById('shop-name').value = data.owner.shopName;
+        document.getElementById('shop-image').value = data.owner.shopImage;
+        document.getElementById('operating-hours').value = data.owner.operatingHours;
+        document.getElementById('services-offered').value = data.owner.servicesOffered;
+        document.getElementById('charges-range').value = data.owner.chargesRange;
+      } catch (error) {
+        console.error(error);
+        alert('Error loading owner details.');
+      }
+    }
+
+    // Update Owner Details
+    document.getElementById('edit-owner-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const token = localStorage.getItem('token');
+      const email = localStorage.getItem('eid');
+
+      if (!token || !email) {
+        alert('Please log in first.');
+        return;
+      }
+
+      const updatedDetails = {
+        name: document.getElementById('owner-name').value,
+        phone: document.getElementById('contact').value,
+        shopLocation: document.getElementById('location').value,
+        shopName: document.getElementById('shop-name').value,
+        shopImage: document.getElementById('shop-image').value,
+        operatingHours: document.getElementById('operating-hours').value,
+        servicesOffered: document.getElementById('services-offered').value,
+        chargesRange: document.getElementById('charges-range').value,
+      };
+
+      try {
+        const response = await fetch(`${API_URL}/${email}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedDetails),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update owner details.');
+        }
+
+        alert('Owner details updated successfully.');
+        closeModal(); // Close modal after update
+        loadOwnerDetails();
+      } catch (error) {
+        console.error(error);
+        alert('Error updating owner details.');
+      }
+    });
+
+    // Open and Close Modal
+    const modal = document.getElementById('edit-modal');
+    document.getElementById('edit-button').addEventListener('click', () => {
+      modal.style.display = 'flex';
+    });
+
+    document.getElementById('close-modal').addEventListener('click', () => {
+      closeModal();
+    });
+
+    function closeModal() {
+      modal.style.display = 'none';
+    }
+
+    window.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        closeModal();
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', loadOwnerDetails);
+  </script>
+
+</body>
+</html>

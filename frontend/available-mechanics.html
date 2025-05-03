@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Mechanics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #f5f6f5;
+            color: #2d3436;
+            line-height: 1.6;
+            padding: 2rem;
+        }
+
+        h1 {
+            text-align: center;
+            color: #c62828; /* Professional red */
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+
+        #home-button {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 2rem;
+        }
+
+        #home-button button {
+            padding: 0.6rem 1.5rem;
+            background-color: #2e7d32; /* Professional green */
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #home-button button:hover {
+            background-color: #1b5e20; /* Darker green */
+            transform: translateY(-2px);
+        }
+
+        #search-bar {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        #search-input {
+            padding: 0.75rem 1rem;
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid #b0bec5; /* Subtle gray */
+            border-radius: 6px;
+            font-size: 1rem;
+            background-color: #ffffff;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #search-input:focus {
+            border-color: #c62828;
+            box-shadow: 0 0 5px rgba(198, 40, 40, 0.3);
+            outline: none;
+        }
+
+        ul#users-list {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            justify-content: center;
+        }
+
+        ul#users-list li {
+            background-color: #ffffff;
+            border: 1px solid #eceff1;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        ul#users-list li:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        ul#users-list li img {
+            max-width: 200px;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            object-fit: cover;
+        }
+
+        ul#users-list li h3 {
+            font-size: 1.5rem;
+            color: #2e7d32; /* Green for shop names */
+            margin-bottom: 1rem;
+        }
+
+        .details {
+            display: none;
+            margin-top: 1rem;
+            font-size: 1rem;
+            color: #4a5558; /* Slightly lighter gray */
+        }
+
+        .details p {
+            margin: 0.5rem 0;
+        }
+
+        .details strong {
+            color: #2d3436;
+        }
+
+        button {
+            padding: 0.6rem 1.2rem;
+            margin: 0.5rem;
+            background-color: #c62828; /* Professional red */
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #9a1d1d; /* Darker red */
+            transform: translateY(-2px);
+        }
+
+        /* Loading State */
+        #users-list.loading::before {
+            content: "Loading mechanics...";
+            display: block;
+            text-align: center;
+            font-size: 1.2rem;
+            color: #c62828;
+            padding: 2rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            ul#users-list {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            ul#users-list {
+                grid-template-columns: 1fr;
+            }
+
+            #search-input {
+                max-width: 100%;
+            }
+
+            ul#users-list li h3 {
+                font-size: 1.25rem;
+            }
+
+            button {
+                font-size: 0.9rem;
+                padding: 0.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="home-button">
+        <button onclick="window.location.href='user-dashboard.html'">Go to Home</button>
+    </div>
+
+    <h1>Available Mechanics</h1>
+
+    <div id="search-bar">
+        <input type="text" id="search-input" placeholder="Search by shop name or location..." onkeyup="filterMechanics()">
+    </div>
+
+    <ul id="users-list">
+        <!-- Mechanics will be dynamically populated here -->
+    </ul>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+
+        async function loadUsers() {
+            const token = localStorage.getItem('token');
+            
+            if (!token) {
+                alert('No token found. Please log in.');
+                return;
+            }
+
+            const usersList = document.getElementById('users-list');
+            usersList.classList.add('loading'); 
+
+            try {
+                const response = await fetch(`${API_URL}/public/mechanics`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Failed to fetch mechanics.');
+                }
+
+                const users = await response.json();
+                displayUsers(users);
+            } catch (error) {
+                console.error('Error loading users:', error);
+                alert('Failed to load users.');
+            } finally {
+                usersList.classList.remove('loading'); 
+            }
+        }
+
+        function displayUsers(users) {
+            const usersList = document.getElementById('users-list');
+            usersList.innerHTML = users.map(user => `
+                <li class="mechanic-item" data-name="${user.shopName.toLowerCase()}" data-location="${user.shopLocation.toLowerCase()}">
+                    <img src="${user.shopImage}" alt="Shop Image">
+                    <h3>${user.shopName}</h3>
+                    <div class="details">
+                        <p><strong>Name:</strong> ${user.name}</p>
+                        <p><strong>Contact:</strong> ${user.phone}</p>
+                        <p><strong>Location:</strong> ${user.shopLocation}</p>
+                        <p><strong>Services:</strong> ${user.servicesOffered}</p>
+                        <p><strong>Charges:</strong> ${user.chargesRange}</p>
+                        <div>
+                            <button onclick="navigateTo1('${user.email}')">Request Service</button>
+                            <button onclick="navigateTo2('${user.email}')">Give Feedback</button>
+                        </div>
+                    </div>
+                    <button onclick="toggleDetails(this)">Show Details</button>
+                </li>
+            `).join('');
+        }
+
+        function navigateTo2(ownerEmail) {
+            window.location.href = `feedbacks.html?ownerEmail=${ownerEmail}`;
+        }
+
+        function navigateTo1(ownerEmail) {
+            window.location.href = `service-request.html?ownerEmail=${ownerEmail}`;
+        }
+
+        function toggleDetails(button) {
+            const detailsDiv = button.previousElementSibling;
+            const isVisible = detailsDiv.style.display === 'block';
+            detailsDiv.style.display = isVisible ? 'none' : 'block';
+            button.textContent = isVisible ? 'Show Details' : 'Hide Details';
+        }
+
+        function filterMechanics() {
+            const searchInput = document.getElementById('search-input').value.toLowerCase();
+            const mechanics = document.querySelectorAll('.mechanic-item');
+            
+            mechanics.forEach(mechanic => {
+                const name = mechanic.getAttribute('data-name');
+                const location = mechanic.getAttribute('data-location');
+                const matchesSearch = name.includes(searchInput) || location.includes(searchInput);
+                mechanic.style.display = matchesSearch ? 'block' : 'none';
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', loadUsers);
+    </script>
+</body>
+</html>
